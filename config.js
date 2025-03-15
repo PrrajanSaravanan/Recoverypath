@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const connect = mongoose.connect("mongodb://localhost:27017/Login-tut");
+const connect = mongoose.connect("mongodb://localhost:27017/");
 
 connect.then(() => {
     console.log("Database Connected Successfully");

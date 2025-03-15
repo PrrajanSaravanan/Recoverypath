@@ -46,9 +46,9 @@
     <script>
         let socket=new WebSocket('ws://localhost:8080');
 
-        socket.onopen=function(event){
-            displayMessage("Connected to the webSocket server.","server");
-        };
+        /*socket.onopen=function(event){
+            displayMessage("Connected to the Live Chat.","server");
+        };*/
         socket.onmessage=function(event){
             displayMessage(event.data,"server");
         };

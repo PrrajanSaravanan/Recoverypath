@@ -26,19 +26,22 @@ app.get("/signup", (req, res) => {
 
 
 app.post("/signup", async (req, res) => {
-
+try {
     const data = {
         name: req.body.username,
         password: req.body.pass,
         gmail:req.body.email
     }
     const existingUser = await collection.findOne({ name: data.name });
-    const existmail= await collection.findOne({gmail: data.gmail});
+    // const existmail= await collection.findOne({gmail: data.gmail});
     if (existingUser) {
+        console.log('exiting user');
         res.send({status:'un',name:' '});
     }
-    else if(existmail)
+    const existmail= await collection.findOne({gmail: data.gmail});
+    if(existmail)
     {
+        console.log('existing mail');
         res.send({status:'ug',name:' '});
     }
     else {
@@ -48,10 +51,15 @@ app.post("/signup", async (req, res) => {
 
         data.password = hashedPassword;
 
-        const userdata = await collection.insertMany(data);
+        const userdata = await collection.insertOne(data);
         res.send({status:'s',name:`${data.name}`});
     }
-
+   
+}
+    catch {
+        console.log('error');
+        res.send({status:false,name:' '});
+    }
 });
 
 app.post("/login", async (req, res) => {
@@ -74,14 +82,14 @@ app.post("/login", async (req, res) => {
             echeck.streak=echeck.streak+1;
             echeck.lastlogin=new Date().toISOString().split('T')[0];
             await collection.deleteOne({gmail:echeck.gmail});
-            await collection.insertMany(echeck);
+            await collection.insertOne(echeck);
         }
         else
         {
             echeck.streak=0;
             echeck.lastlogin=new Date().toISOString().split('T')[0];
             await collection.deleteOne({gmail:echeck.gmail});
-            await collection.insertMany(echeck);
+            await collection.insertOne(echeck);
         }
         res.send({status:true,name:`${echeck.name}`})
     }

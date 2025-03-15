@@ -5,7 +5,7 @@ document.getElementById("login").addEventListener('submit',function(event){
     const pass=document.getElementById('login-password');
     const data={email:email.value,password:pass.value};
 
-    fetch('http://localhost:5173/login',{
+    fetch('http://localhost:3000/login',{
         method:'POST',
         headers: {
               'Content-Type': 'application/json'
@@ -30,7 +30,7 @@ document.getElementById("login").addEventListener('submit',function(event){
 
 document.getElementById("signup").addEventListener('submit',function(event){
     event.preventDefault();
-
+    console.log('button clickefor signup');
     const username =document.getElementById('signup-name');
     const email =document.getElementById('signup-email');
     const pass =document.getElementById('signup-password');
@@ -42,7 +42,7 @@ document.getElementById("signup").addEventListener('submit',function(event){
         window.location.reload();
     }
     else{
-        fetch('http://localhost:5173/signup',{
+        fetch('http://localhost:3000/signup',{
             method:'POST',
             headers: {
                 'Content-Type': 'application/json'
