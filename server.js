@@ -5,6 +5,8 @@ const app=express();
 const port =5173;
 const webSocket=require("ws");
 const wss=new webSocket.Server({port:8080});
+const bcrypt = require('bcrypt');
+const collection = require("./config");
 
 app.use(express.json());
 app.use(express.static(path.join(__dirname)));
@@ -12,6 +14,87 @@ app.use(express.static(path.join(__dirname)));
 app.get('/',(req,res)=>{
     res.sendFile(res.path(__dirname,'index.html'));
 });
+
+app.use(express.static("public"));
+
+app.use(express.urlencoded({ extended: false }));
+
+app.set("view engine", "ejs");
+
+app.get("/", (req, res) => {
+    res.render("login");
+});
+
+app.get("/signup", (req, res) => {
+    res.render("signup");
+});
+
+
+app.post("/signup", async (req, res) => {
+
+    const data = {
+        name: req.body.username,
+        password: req.body.pass,
+        gmail:req.body.email
+    }
+    const existingUser = await collection.findOne({ name: data.name });
+    const existmail= await collection.findOne({gmail: data.gmail});
+    if (existingUser) {
+        res.send({status:'un',name:' '});
+    }
+    else if(existmail)
+    {
+        res.send({status:'ug',name:' '});
+    }
+    else {
+        
+        const saltRounds = 10; 
+        const hashedPassword = await bcrypt.hash(data.password, saltRounds);
+
+        data.password = hashedPassword;
+
+        const userdata = await collection.insertMany(data);
+        res.send({status:'s',name:`${data.name}`});
+    }
+
+});
+
+app.post("/login", async (req, res) => {
+    try {
+       const echeck=await collection.findOne({gmail :req.body.email});
+       if (!echeck) {
+        res.send({status:false , name :' '});
+        }
+        const pmatch=await bcrypt.compare(req.body.pass,echeck.password);
+        if(!pmatch)
+        {
+            res.send({status:false , name: ' '});
+        }
+        const lastdate=echeck.lastdate;
+        const cdate=new Date().toISOString().split('T')[0];
+        const t=(cdate-lastdate)/(1000 * 60 * 60 * 24);
+        if(t==1)
+        {
+            echeck.XP=echeck.XP+10;
+            echeck.streak=echeck.streak+1;
+            echeck.lastlogin=new Date().toISOString().split('T')[0];
+            await collection.deleteOne({gmail:echeck.gmail});
+            await collection.insertMany(echeck);
+        }
+        else
+        {
+            echeck.streak=0;
+            echeck.lastlogin=new Date().toISOString().split('T')[0];
+            await collection.deleteOne({gmail:echeck.gmail});
+            await collection.insertMany(echeck);
+        }
+        res.send({status:true,name:`${echeck.name}`})
+    }
+    catch {
+        res.send({status:false,name:' '});
+    }
+});
+
 
 
 wss.on("connection", ws=>{
