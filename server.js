@@ -36,13 +36,13 @@ try {
     // const existmail= await collection.findOne({gmail: data.gmail});
     if (existingUser) {
         console.log('exiting user');
-        res.send({status:'un',name:' '});
+        return res.send({status:'un',name:' '});
     }
     const existmail= await collection.findOne({gmail: data.gmail});
     if(existmail)
     {
         console.log('existing mail');
-        res.send({status:'ug',name:' '});
+        return res.send({status:'ug',name:' '});
     }
     else {
         
@@ -52,7 +52,7 @@ try {
         data.password = hashedPassword;
 
         const userdata = await collection.insertOne(data);
-        res.send({status:'s',name:`${data.name}`});
+        return res.send({status:'s',name:`${data.name}`});
     }
    
 }
@@ -66,12 +66,12 @@ app.post("/login", async (req, res) => {
     try {
        const echeck=await collection.findOne({gmail :req.body.email});
        if (!echeck) {
-        res.send({status:false , name :' '});
+        return res.send({status:false , name :' '});
         }
         const pmatch=await bcrypt.compare(req.body.pass,echeck.password);
         if(!pmatch)
         {
-            res.send({status:false , name: ' '});
+            return res.send({status:false , name: ' '});
         }
         const lastdate=echeck.lastdate;
         const cdate=new Date().toISOString().split('T')[0];
@@ -91,7 +91,7 @@ app.post("/login", async (req, res) => {
             await collection.deleteOne({gmail:echeck.gmail});
             await collection.insertOne(echeck);
         }
-        res.send({status:true,name:`${echeck.name}`})
+        return res.send({status:true,name:`${echeck.name}`})
     }
     catch {
         res.send({status:false,name:' '});
