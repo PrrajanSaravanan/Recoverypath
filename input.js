@@ -3,7 +3,7 @@ document.getElementById("login").addEventListener('submit',function(event){
 
     const email=document.getElementById('login-email');
     const pass=document.getElementById('login-password');
-    const data={email,password:pass};
+    const data={email:email.value,password:pass.value};
 
     fetch('http://localhost:5173/login',{
         method:'POST',
@@ -64,6 +64,7 @@ document.getElementById("signup").addEventListener('submit',function(event){
             window.location.href = `/index.html?name=${name}`;
         }
     })
+    .catch(error => console.log(error));
         }
     });
 
