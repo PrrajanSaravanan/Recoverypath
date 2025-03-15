@@ -1,7 +1,7 @@
 document.getElementById("login").addEventListener('submit',function(event){
     event.preventDefault();
 
-    const email=document.getElementById('login-mail');
+    const email=document.getElementById('login-email');
     const pass=document.getElementById('login-password');
     const data={email,password:pass};
 
@@ -35,9 +35,9 @@ document.getElementById("signup").addEventListener('submit',function(event){
     const email =document.getElementById('signup-email');
     const pass =document.getElementById('signup-password');
     const cpass =document.getElementById('signup-confirm-password');
-    const data ={username ,mail:email,password:pass};
+    const data ={ username: username.value, email: email.value, password: pass.value };
 
-    if(pass!=cpass){
+    if(pass.value!==cpass.value){
         alert ('Password and Confirm password doesnt matches');
         window.location.reload();
     }
@@ -56,10 +56,10 @@ document.getElementById("signup").addEventListener('submit',function(event){
             window.location.reload();
         }
         else if(result.status==='ug'){
-            alert('This mail has an existing account ! /n Try to login ...');
+            alert('This mail has an existing account ! \n Try to login ...');
             window.location.reload();
         }
-        else if(result ==='s'){
+        else if(result.status ==='s'){
             const name =result.name;
             window.location.href = `/index.html?name=${name}`;
         }
