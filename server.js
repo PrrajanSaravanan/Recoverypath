@@ -2,12 +2,14 @@ const express=require("express");
 const bodyparse=require("body-parser");
 const path = require("path");
 const app=express();
+const cors=require('cors');
 const port =3000;
 const webSocket=require("ws");
 const wss=new webSocket.Server({port:8080});
 const bcrypt = require('bcrypt');
 const collection = require("./config");
 
+app.use(cors());
 app.use(express.json());
 app.use(express.static(path.join(__dirname)));
 
@@ -17,11 +19,12 @@ app.get('/',(req,res)=>{
 
 app.use(express.static("public"));
 
+
 app.use(express.urlencoded({ extended: false }));
 
 
 app.get("/signup", (req, res) => {
-    res.render("signup");
+     res.render("signup");
 });
 
 
@@ -29,9 +32,10 @@ app.post("/signup", async (req, res) => {
 try {
     const data = {
         name: req.body.username,
-        password: req.body.pass,
+        password: req.body.password,
         gmail:req.body.email
     }
+    console.log(data);
     const existingUser = await collection.findOne({ name: data.name });
     // const existmail= await collection.findOne({gmail: data.gmail});
     if (existingUser) {
@@ -55,7 +59,7 @@ try {
         return res.send({status:'s',name:`${data.name}`});
     }
    
-}
+    }
     catch {
         console.log('error');
         res.send({status:false,name:' '});
